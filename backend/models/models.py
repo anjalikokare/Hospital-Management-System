@@ -100,7 +100,7 @@ class Treatment(db.Model):
     prescription = db.Column(db.Text)
     notes = db.Column(db.Text)
 
-    appointment = db.relationship("Appointment", backref=db.backref("treatment", uselist=False))
+    appointment = db.relationship("Appointment", backref="treatment")
 
     def __repr__(self):
         return f"<Treatment appointment_id={self.appointment_id}>"

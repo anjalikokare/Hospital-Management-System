@@ -1,24 +1,30 @@
 <template>
-  <div class="complete-page">
-    <div class="login-card">
-      <h2>Cancel Appointment</h2>
-      <div class="input-group">
-        <textarea
-          placeholder="Reason for cancellation"
-          v-model="reason"
-          rows="3"
-        ></textarea>
+  <div class="doctor-dashboard-wrapper">
+    <AppNavbar role="doctor" />
+    <div class="complete-page">
+      <div class="login-card">
+        <h2>Cancel Appointment</h2>
+        <div class="input-group">
+          <textarea
+            placeholder="Reason for cancellation"
+            v-model="reason"
+            rows="3"
+          ></textarea>
+        </div>
+        <button class="login-btn" @click="cancel">
+          Confirm Cancel
+        </button>
       </div>
-      <button class="login-btn" @click="cancel">
-        Confirm Cancel
-      </button>
     </div>
   </div>
 </template>
 
 <script>
 import api from "../services/api";
+import AppNavbar from "../components/AppNavbar.vue";
+
 export default {
+  components: { AppNavbar },
   data() {
     return { reason: "" };
   },
@@ -36,3 +42,15 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.doctor-dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.complete-page {
+  flex: 1;
+  min-height: auto !important;
+}
+</style>
