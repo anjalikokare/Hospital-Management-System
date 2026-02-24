@@ -23,9 +23,14 @@
       <div class="section-card">
         <div class="section-header">
           <h4>Doctor Management</h4>
-          <button class="btn-primary" @click="$router.push('/admin/add-doctor')">
-            + Add Doctor
-          </button>
+          <div class="header-actions">
+            <button class="btn-secondary" @click="runDailyReminders">
+               🔔 Send Daily Reminders
+            </button>
+            <button class="btn-primary" @click="$router.push('/admin/add-doctor')">
+              + Add Doctor
+            </button>
+          </div>
         </div>
 
         <input
@@ -174,6 +179,7 @@ export default {
       appointments: [],
       doctorSearch: "",
       patientSearch: "",
+      reportReady: false,
     };
   },
 
@@ -214,6 +220,18 @@ export default {
       await api.put(`/admin/user/${userId}`);
       this.fetchDoctors();
       this.fetchPatients();
+    },
+
+    editDoctor(doctorId) {
+      this.$router.push(`/admin/edit-doctor/${doctorId}`);
+    },
+    async runDailyReminders() {
+      try {
+        await api.post("/admin/run-daily-reminders");
+        alert("Daily reminders job triggered. Check the celery worker terminal for email logs.");
+      } catch (err) {
+        alert("Failed to trigger reminders");
+      }
     },
   },
 };

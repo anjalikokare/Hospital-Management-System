@@ -70,24 +70,12 @@ export default {
       specializations: [
         "Cardiologist",
         "Dermatologist",
-        "Endocrinologist",
-        "Gastroenterologist",
         "General Physician",
-        "Gynecologist",
-        "Hematologist",
-        "Nephrologist",
         "Neurologist",
-        "Oncologist",
-        "Ophthalmologist",
         "Orthopedic Surgeon",
         "Pediatrician",
         "Psychiatrist",
-        "Pulmonologist",
-        "Radiologist",
-        "Rheumatologist",
-        "Surgeon",
-        "Urologist",
-        "ENT Specialist"
+        "Surgeon"
       ]
     };
   },

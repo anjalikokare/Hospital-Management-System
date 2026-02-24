@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from models.models import User, Doctor, Patient, Appointment, Department, Availability, Treatment, db
 from werkzeug.security import generate_password_hash
 from utils.admin_required import admin_required
@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt
 from tasks.daily_reminder import send_daily_reminders
 from cache import cache
 
-admin_bp = Blueprint('admin', __name__, url_prefix='api/admin')
+admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/dashboard', methods=['GET'])
 @admin_required
@@ -56,10 +56,12 @@ def add_doctor():
     db.session.add(doctor)
     db.session.commit()
 
+    cache.clear()
     return {"message": "Doctor added successfully"}, 201
 
 @admin_bp.route('/doctors', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=60, query_string=True)
 def get_doctors():
     claims = get_jwt()
     if claims.get("role") != "admin":
@@ -90,8 +92,26 @@ def get_doctors():
 
     return result, 200
 
+@admin_bp.route('/doctor/<int:doctor_id>', methods=['GET'])
+@admin_required
+def get_doctor(doctor_id):
+    doctor = Doctor.query.get(doctor_id)
+    if not doctor:
+        return {"message": "Doctor not found"}, 404
+
+    return {
+        "doctor_id": doctor.id,
+        "username": doctor.user.username,
+        "email": doctor.user.email,
+        "specialization": doctor.specialization,
+        "experience_years": doctor.experience_years,
+        "department_id": doctor.department_id,
+        "is_active": doctor.user.is_active
+    }, 200
+
 @admin_bp.route('/patients', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=60, query_string=True)
 def get_patients():
     claims = get_jwt()
     if claims.get("role") != "admin":
@@ -157,6 +177,7 @@ def deactivate_user(user_id):
     user.is_active = not user.is_active
     db.session.commit()
 
+    cache.clear()
     return {
         "message": "User status updated successfully",
         "is_active": user.is_active
@@ -181,6 +202,7 @@ def update_doctor(doctor_id):
         doctor.department_id = data["department_id"]
 
     db.session.commit()
+    cache.clear()
     return {"message": "Doctor updated successfully"}, 200
 
 @admin_bp.route('/patient/<int:patient_id>', methods=['PUT'])
@@ -197,11 +219,38 @@ def update_patient(patient_id):
     patient.gender = data.get("gender", patient.gender)
 
     db.session.commit()
+    cache.clear()
 
     return {
         "message": "Patient profile updated successfully",
         "patient_id": patient.id
     }, 200
+
+@admin_bp.route('/export-all', methods=['POST'])
+@admin_required
+def trigger_full_export():
+    from tasks.export_csv import export_all_data
+    task = export_all_data.delay()
+    return {"message": "Full hospital data export started", "task_id": task.id}, 202
+
+@admin_bp.route('/generate-reports', methods=['POST'])
+@admin_required
+def trigger_monthly_reports():
+    from tasks.monthly_report import generate_monthly_reports
+    task = generate_monthly_reports.delay()
+    return {"message": "Monthly PDF reports generation started", "task_id": task.id}, 202
+
+
+@admin_bp.route('/reports', methods=['GET'])
+@admin_required
+def list_reports():
+    import os
+    reports_dir = os.path.join(current_app.static_folder, "reports")
+    if not os.path.exists(reports_dir):
+        return [], 200
+    
+    files = os.listdir(reports_dir)
+    return sorted(files, reverse=True), 200
 
 @admin_bp.route('/run-daily-reminders', methods=['POST'])
 @jwt_required()

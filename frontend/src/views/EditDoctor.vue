@@ -3,10 +3,13 @@
     <div class="login-card">
       <h2>Edit Doctor</h2>
       <div class="input-group">
-        <input
-          type="text"
-          placeholder="Specialization"
-          v-model="form.specialization"/>
+        <select
+          v-model="form.specialization"
+          class="specialization-select"
+          required>
+          <option value="" disabled>-- Select Specialization --</option>
+          <option v-for="s in specializations" :key="s" :value="s">{{ s }}</option>
+        </select>
       </div>
       <div class="input-group">
         <input
@@ -32,7 +35,17 @@ export default {
       form: {
         specialization: "",
         experience_years: 0
-      }
+      },
+      specializations: [
+        "Cardiologist",
+        "Dermatologist",
+        "General Physician",
+        "Neurologist",
+        "Orthopedic Surgeon",
+        "Pediatrician",
+        "Psychiatrist",
+        "Surgeon"
+      ]
     };
   },
 
@@ -43,12 +56,13 @@ export default {
   methods: {
     async loadDoctor() {
       const doctorId = this.$route.params.id;
-      const res = await api.get("/admin/doctors");
-      const doctor = res.data.find(d => d.doctor_id == doctorId);
-
-      if (doctor) {
+      try {
+        const res = await api.get(`/admin/doctor/${doctorId}`);
+        const doctor = res.data;
         this.form.specialization = doctor.specialization;
         this.form.experience_years = doctor.experience_years;
+      } catch (err) {
+        alert("Failed to load doctor details");
       }
     },
 
