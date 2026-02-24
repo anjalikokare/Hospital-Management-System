@@ -25,7 +25,7 @@ def create_app():
     @app.route("/", defaults={'path': ''})
     @app.route("/<path:path>")
     def serve_frontend(path):
-        if path.startswith("api/") or path.startswith("static/"):
+        if path.startswith("api/"):
             return {"message": "Not Found"}, 404
         return render_template("index.html")
 
@@ -41,7 +41,7 @@ def create_app():
         broker_url="redis://127.0.0.1:6379/0",
         result_backend="redis://127.0.0.1:6379/0",
 
-        CACHE_TYPE="RedisCache",
+        CACHE_TYPE="SimpleCache",
         CACHE_REDIS_HOST="127.0.0.1",
         CACHE_REDIS_PORT=6379,
         CACHE_REDIS_DB=1,            
@@ -64,4 +64,6 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
