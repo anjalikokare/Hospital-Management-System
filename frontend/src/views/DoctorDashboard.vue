@@ -14,16 +14,19 @@
         </div>
       </div>
       <div class="section-card">
-        <h3>📄 Monthly Report</h3>
-        <p class="muted">Download your latest monthly report (PDF)</p>
-
-        <button class="btn-primary" @click="downloadMonthlyReport">
-          Download Monthly Report
-        </button>
-
-        <p v-if="reportMsg" class="muted" style="margin-top:10px;">
-          {{ reportMsg }}
-        </p>
+        <div class="section-header">
+          <h3>📄 Monthly Reports</h3>
+          <button class="btn-primary" @click="downloadMonthlyReport">📊 Generate Report</button>
+        </div>
+        <p class="muted">View and download your monthly performance reports (PDF)</p>
+        
+        <ul class="report-list" style="margin-top:20px;">
+          <li v-if="reports.length === 0" class="report-item">No reports generated yet.</li>
+          <li v-for="report in reports" :key="report" class="report-item">
+             📄 {{ report }}
+             <a :href="ROOT_URL + '/static/reports/' + report" target="_blank" class="view-link">View Report</a>
+          </li>
+        </ul>
       </div>
       <div class="section-card">
         <h3>My Appointments</h3>
@@ -132,7 +135,7 @@
 </template>
 
 <script>
-import api from "../services/api";
+import api, { ROOT_URL } from "../services/api";
 import AppNavbar from "../components/AppNavbar.vue";
 
 export default {
@@ -141,10 +144,12 @@ export default {
 
   data() {
     return {
+      ROOT_URL,
       stats: { today: 0, patients: 0 },
       appointments: [],
       patients: [],
       reportMsg: "",
+      reports: [],
       availabilityForm: {
         date: "",
         morning_slot: false,
@@ -155,6 +160,7 @@ export default {
 
   mounted() {
     this.fetchAppointments();
+    this.fetchReports();
   },
 
   methods: {
@@ -166,16 +172,24 @@ export default {
     },
 
     async downloadMonthlyReport() {
-  try {
-    this.reportMsg = "Generating report...";
-    const res = await api.post("/doctor/monthly-report/generate");
-    const url = "http://127.0.0.1:5000" + res.data.download_url;
-    this.reportMsg = "Opening report...";
-    window.open(url, "_blank");
-  } catch (e) {
-    this.reportMsg = e.response?.data?.message || "Report generation failed.";
-  }
-},
+      try {
+        this.reportMsg = "Generating report...";
+        await api.post("/doctor/monthly-report/generate");
+        this.reportMsg = "Report generated successfully!";
+        this.fetchReports();
+      } catch (e) {
+        this.reportMsg = e.response?.data?.message || "Report generation failed.";
+      }
+    },
+
+    async fetchReports() {
+      try {
+        const res = await api.get("/doctor/reports");
+        this.reports = res.data;
+      } catch (err) {
+        console.error("Failed to fetch reports");
+      }
+    },
 
     calculateStats() {
       const today = new Date().toISOString().split("T")[0];

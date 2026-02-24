@@ -6,7 +6,7 @@ from models.models import Doctor, Patient, User, Appointment, Treatment, Availab
 from tasks.monthly_report import generate_monthly_reports
 from cache import cache
 
-doctor_bp = Blueprint('doctor', __name__, url_prefix='api/doctor')
+doctor_bp = Blueprint('doctor', __name__)
 
 @doctor_bp.route('/dashboard', methods=['GET'])
 @jwt_required()
@@ -309,3 +309,28 @@ def generate_monthly_report():
     files.sort(reverse=True)
     latest = files[0]
     return {"download_url": f"/static/reports/{latest}"}, 200
+
+@doctor_bp.route('/reports', methods=['GET'])
+@jwt_required()
+def list_doctor_reports():
+    claims = get_jwt()
+    if claims.get("role") != "doctor":
+        return {"message": "Doctor access required"}, 403
+
+    user_id = int(get_jwt_identity())
+    doctor = Doctor.query.filter_by(user_id=user_id).first()
+    if not doctor:
+        return {"message": "Doctor profile not found"}, 404
+
+    base_dir = os.path.dirname(os.path.abspath(__file__)) 
+    reports_dir = os.path.abspath(os.path.join(base_dir, "static", "reports"))
+
+    if not os.path.exists(reports_dir):
+        return [], 200
+
+    files = [
+        f for f in os.listdir(reports_dir)
+        if f.startswith(f"doctor_{doctor.id}_report_") and f.endswith(".pdf")
+    ]
+    files.sort(reverse=True)
+    return files, 200
