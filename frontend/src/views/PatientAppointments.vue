@@ -41,21 +41,6 @@
         </tbody>
       </table>
     </div>
-    <div v-if="showReschedule" class="reschedule-box">
-      <h3>Reschedule Appointment</h3>
-      <label>New Date</label>
-      <input type="date" v-model="newDate" />
-      <label>New Time</label>
-      <input type="time" v-model="newTime" />
-      <div class="reschedule-actions">
-        <button class="btn-success" @click="submitReschedule">
-          Save
-        </button>
-        <button class="btn-secondary" @click="showReschedule = false">
-          Cancel
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -66,10 +51,6 @@ export default {
   data() {
     return {
       appointments: [],
-      showReschedule: false,
-      selectedAppointment: null,
-      newDate: "",
-      newTime: ""
     };
   },
 
@@ -84,32 +65,9 @@ export default {
     },
 
     openReschedule(a) {
-      this.selectedAppointment = a;
-      this.newDate = a.date;
-      this.newTime = a.time;
-      this.showReschedule = true;
+      this.$router.push(`/patient/appointment/${a.appointment_id}/reschedule`);
     },
 
-    async submitReschedule() {
-      try {
-        await api.put(
-          `/patient/appointment/${this.selectedAppointment.appointment_id}/reschedule`,
-          {
-            date: this.newDate,
-            time: this.newTime
-          }
-        );
-
-        alert("Appointment rescheduled successfully");
-        this.showReschedule = false;
-        this.fetchAppointments();
-      } catch (err) {
-        alert(
-          err.response?.data?.message ||
-          "Unable to reschedule appointment"
-        );
-      }
-    }
   }
 };
 </script>

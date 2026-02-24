@@ -7,10 +7,11 @@ from tasks.export_csv import export_treatment_history
 from celery_config import celery
 from cache import cache
 
-patient_bp = Blueprint('patient', __name__, url_prefix='api/patient')
+patient_bp = Blueprint('patient', __name__)
 
 @patient_bp.route('/doctors', methods=['GET'])
 @jwt_required()
+@cache.cached(timeout=300, query_string=True)
 def get_doctors():
     claims = get_jwt()
 
@@ -367,7 +368,7 @@ def get_export_status(task_id):
     if result.state == "SUCCESS":
         return {
             "state": "SUCCESS",
-            "file": result.result   # 👈 static/exports/xxx.csv
+            "file": result.result   
         }, 200
 
     elif result.state == "FAILURE":

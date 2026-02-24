@@ -93,29 +93,19 @@
       </div>
       <div v-if="showHistory" class="section-card">
         <h3>My Medical History</h3>
-        <table class="styled-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Date</th>
-              <th>Diagnosis</th>
-              <th>Prescription</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="history.length === 0">
-              <td colspan="5" class="center">No medical history</td>
-            </tr>
-            <tr v-for="(h, i) in history" :key="i">
-              <td>{{ i + 1 }}</td>
-              <td>{{ h.date }}</td>
-              <td>{{ h.diagnosis }}</td>
-              <td>{{ h.prescription }}</td>
-              <td>{{ h.notes }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div v-if="history.length === 0" class="center">
+          <p>No medical history</p>
+        </div>
+        <div v-else>
+          <div v-for="(h, i) in history" :key="i" class="big-history-box" style="margin-bottom: 20px; width: 100%;">
+            <div class="history-content">
+              <p><span>Date:</span> {{ h.date }}</p>
+              <p><span>Diagnosis:</span> {{ h.diagnosis }}</p>
+              <p><span>Prescription:</span> {{ h.prescription }}</p>
+              <p><span>Notes:</span> {{ h.notes }}</p>
+            </div>
+          </div>
+        </div>
         <div class="section-card export-section">
           <h3>Export Treatment History</h3>
           <button class="btn-primary" @click="startExport">Export CSV</button>
@@ -145,7 +135,7 @@
 </template>
 
 <script>
-import api from "../services/api";
+import api, { ROOT_URL } from "../services/api";
 import AppNavbar from "../components/AppNavbar.vue";
 
 export default {
@@ -277,7 +267,7 @@ export default {
         this.exportStatus = res.data.state;
 
         if (res.data.state === "SUCCESS" && res.data.file) {
-        this.downloadUrl = `http://127.0.0.1:5000/${res.data.file}`;
+          this.downloadUrl = `${ROOT_URL}/${res.data.file}`;
           this.exportStatus = "Completed ✅";
         }
       } catch (err) {
