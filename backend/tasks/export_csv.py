@@ -2,7 +2,7 @@ import csv
 import os
 from celery_config import celery
 from flask import current_app
-from models.models import Treatment, Appointment
+from models.models import Treatment, Appointment, Doctor, Patient, User
 
 @celery.task(name="tasks.export_csv.export_treatment_history")
 def export_treatment_history(patient_id):
@@ -38,5 +38,35 @@ def export_treatment_history(patient_id):
         return f"static/exports/{filename}"
 
     except Exception as e:
-        print("❌ Export failed:", str(e))
+        print("Export failed:", str(e))
+        raise e
+
+@celery.task(name="tasks.export_csv.export_all_data")
+def export_all_data():
+    try:
+        static_dir = os.path.join(current_app.static_folder, "exports")
+        os.makedirs(static_dir, exist_ok=True)
+
+        filename = "full_hospital_data.csv"
+        file_path = os.path.join(static_dir, filename)
+
+        appointments = Appointment.query.all()
+
+        with open(file_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["ID", "Patient", "Doctor", "Date", "Status"])
+            for a in appointments:
+                writer.writerow([
+                    a.id,
+                    a.patient.user.username,
+                    a.doctor.user.username,
+                    a.date.isoformat(),
+                    a.status
+                ])
+
+        print(f"Full CSV Export ready: {file_path}")
+        return f"static/exports/{filename}"
+
+    except Exception as e:
+        print("Full Export failed:", str(e))
         raise e

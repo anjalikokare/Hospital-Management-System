@@ -4,11 +4,18 @@ from models.models import db
 from celery.schedules import crontab
 
 
+import os
+
 def create_flask_app():
-    app = Flask("celery_worker")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    instance_path = os.path.join(base_dir, "instance")
+    db_path = os.path.join(instance_path, "hms_v2.db")
+    static_folder = os.path.join(base_dir, "static")
+
+    app = Flask("celery_worker", static_folder=static_folder)
 
     app.config.update(
-        SQLALCHEMY_DATABASE_URI="sqlite:///hms_v2.db",
+        SQLALCHEMY_DATABASE_URI=f"sqlite:///{db_path}",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         broker_url="redis://127.0.0.1:6379/0",
         result_backend="redis://127.0.0.1:6379/0",
@@ -43,7 +50,7 @@ celery.Task = ContextTask
 celery.conf.beat_schedule = {
     "daily-reminder-job": {
         "task": "tasks.daily_reminder.send_daily_reminders",
-        "schedule": crontab(minute="*/2"),
+        "schedule": crontab(minute="*/5"),
     },
     "monthly-report-job": {
         "task": "tasks.monthly_report.generate_monthly_reports",

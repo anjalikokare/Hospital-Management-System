@@ -104,6 +104,6 @@ def generate_monthly_reports():
                     c.setFont("Helvetica", 10)
 
         c.save()
-        print(f"✅ Monthly report generated: {file_path}")
+        print(f"Monthly report generated: {file_path}")
 
     return {"month": month_tag, "doctors": len(doctors)}
