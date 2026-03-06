@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Hospital Management System API
+  description: API for managing Hospital Administrators, Doctors, and Patients, including appointment scheduling and treatment logging.
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:5000/api
+    description: Local development server
+
+paths:
+  /auth/login:
+    post:
+      summary: Login User
+      description: Authenticate user using username and password.
+      responses:
+        '200':
+          description: OK - JWT token returned
+        '401':
+          description: Unauthorized
+
+  /admin/doctors:
+    get:
+      summary: List all Doctors
+      responses:
+        '200':
+          description: List of doctors
+    post:
+      summary: Add a new Doctor
+      responses:
+        '201':
+          description: Created
+
+  /doctor/availability:
+    post:
+      summary: Manage Availability
+      description: Update doctor's availability slots for a specific date.
+      responses:
+        '200':
+          description: Success
+
+  /patient/appointments:
+    post:
+      summary: Book Appointment
+      responses:
+        '201':
+          description: Appointment booked
+
+  /doctor/treat:
+    post:
+      summary: Submit Treatment
+      description: Add diagnosis and prescription for an appointment.
+      responses:
+        '200':
+          description: Success
