@@ -1,5 +1,5 @@
 <template>
-  <div class="history-page">
+  <div class="dashboard-bg flex-center">
     <div class="big-history-box">
       <h2 class="title">Patient History</h2>
       <p v-if="history.length === 0" class="empty">
@@ -39,3 +39,4 @@ export default {
   }
 };
 </script>
+

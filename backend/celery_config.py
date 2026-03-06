@@ -2,8 +2,6 @@ from celery import Celery
 from flask import Flask
 from models.models import db
 from celery.schedules import crontab
-
-
 import os
 
 def create_flask_app():
@@ -50,7 +48,7 @@ celery.Task = ContextTask
 celery.conf.beat_schedule = {
     "daily-reminder-job": {
         "task": "tasks.daily_reminder.send_daily_reminders",
-        "schedule": crontab(minute="*/5"),
+        "schedule": crontab(minute="*/2"),
     },
     "monthly-report-job": {
         "task": "tasks.monthly_report.generate_monthly_reports",
@@ -62,3 +60,5 @@ celery.conf.beat_schedule = {
 import tasks.export_csv
 import tasks.daily_reminder
 import tasks.monthly_report
+
+

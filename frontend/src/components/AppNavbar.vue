@@ -1,13 +1,17 @@
 <template>
   <nav class="navbar">
-    <div class="nav-left">
-      <h3>HMS</h3>
+    <div class="logo-container" @click="goHome">
+      <img src="../assets/1235896.jpeg" alt="HMS Logo" class="nav-logo" />
+      <span class="logo-text">MEDCARE HMS</span>
     </div>
     <div class="nav-right">
       <button class="nav-btn" @click="goHome">
         Home
       </button>
-      <button class="nav-btn" @click="goEditProfile">
+      <button
+        v-if="userRole === 'patient'"
+        class="nav-btn"
+        @click="goEditProfile">
         Edit Profile
       </button>
       <button class="nav-btn logout" @click="logout">
@@ -19,6 +23,11 @@
 <script>
 export default {
   name: "AppNavbar",
+  data() {
+    return {
+      userRole: localStorage.getItem("role")
+    };
+  },
   methods: {
     goHome() {
       const role = localStorage.getItem("role");
@@ -39,3 +48,4 @@ export default {
   }
 };
 </script>
+

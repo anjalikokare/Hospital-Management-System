@@ -1,30 +1,45 @@
 <template>
-  <div class="page">
-    <AppNavbar role="doctor" />
-    <div class="section-card">
-      <h2>Medical History for {{ $route.params.username }}</h2>
+  <div class="doctor-dashboard-wrapper auth-bg flex-center">
+    <div class="login-card transition-fade" style="max-width: 500px;">
+      <h2 class="page-title center">Patient History: {{ $route.params.username }}</h2>
       
-      <div v-if="history.length === 0" class="section-card center">
-        <p>No history records found.</p>
+      <div v-if="history.length === 0" class="center mt-30">
+        <p class="form-subtitle">No consultation records found.</p>
       </div>
 
-      <div v-else class="history-list">
-        <div v-for="(h, i) in history" :key="i" class="big-history-box" style="margin-bottom: 20px; width: 100%;">
-          <div class="history-content">
-            <p><span>Date:</span> {{ h.date }}</p>
-            <p><span>Diagnosis:</span> {{ h.diagnosis }}</p>
-            <p><span>Prescription:</span> {{ h.prescription }}</p>
-            <p><span>Notes:</span> {{ h.notes }}</p>
+      <div v-else class="mt-20">
+        <div v-for="(h, i) in history" :key="i" class="history-entry mb-20">
+          <p class="mb-5"><strong class="text-primary">Date:</strong> {{ h.date }}</p>
+          
+          <div class="mb-10">
+            <p class="bold-label mb-2">Diagnosis</p>
+            <p class="muted-text">{{ h.diagnosis }}</p>
           </div>
+
+          <div class="mb-10">
+            <p class="bold-label mb-2">Prescription</p>
+            <p class="muted-text">{{ h.prescription }}</p>
+          </div>
+
+          <div v-if="h.notes" class="mb-10">
+            <p class="bold-label mb-2">Doctor's Notes</p>
+            <p class="small-text italic">{{ h.notes }}</p>
+          </div>
+          
+          <hr v-if="i !== history.length - 1" class="simple-hr" />
         </div>
       </div>
-      
-      <button class="btn-primary" @click="$router.back()" style="margin-top: 20px;">
-        ← Back
-      </button>
+
+      <div class="center mt-30">
+        <button class="btn-primary" @click="$router.back()">
+          Back to Dashboard
+        </button>
+      </div>
     </div>
   </div>
 </template>
+
+
 
 <script>
 import api from "../services/api";
@@ -54,3 +69,4 @@ export default {
   }
 };
 </script>
+

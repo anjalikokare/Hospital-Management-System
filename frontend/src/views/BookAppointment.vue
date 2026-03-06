@@ -1,5 +1,5 @@
 <template>
-  <div class="login-page">
+  <div class="dashboard-bg flex-center">
     <div class="login-card">
       <h2>Book Appointment</h2>
       <div class="input-group">
@@ -71,3 +71,4 @@ export default {
   }
 };
 </script>
+

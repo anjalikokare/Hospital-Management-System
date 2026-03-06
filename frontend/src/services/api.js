@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const ROOT_URL = "http://127.0.0.1:5000";
+
 const api = axios.create({
-  baseURL: "http://127.0.0.1:5000/api",
+  baseURL: `${ROOT_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -15,4 +17,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export { ROOT_URL };
 export default api;
+

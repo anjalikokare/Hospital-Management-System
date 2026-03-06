@@ -17,3 +17,5 @@ with app.app_context():
         print("Admin user created")
     else:
         print("Admin already exists")
+
+

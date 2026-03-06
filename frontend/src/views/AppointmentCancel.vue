@@ -1,5 +1,5 @@
 <template>
-  <div class="doctor-dashboard-wrapper">
+  <div class="doctor-dashboard-wrapper dashboard-bg">
     <AppNavbar role="doctor" />
     <div class="complete-page">
       <div class="login-card">
@@ -43,14 +43,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.doctor-dashboard-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-.complete-page {
-  flex: 1;
-  min-height: auto !important;
-}
-</style>

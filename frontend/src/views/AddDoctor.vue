@@ -1,54 +1,59 @@
 <template>
-  <div class="login-page">
-    <div class="login-card">
-      <h2>Add Doctor</h2>
-      <div class="input-group">
-        <input
-          type="text"
-          placeholder="Username"
-          v-model="form.username"
-          required/>
-        <span class="icon">👤</span>
+  <div class="admin-dashboard-wrapper auth-bg">
+    <AppNavbar role="admin" />
+    <div class="admin-page flex-center bg-light">
+      <div class="section-card narrow-card transition-fade">
+        <h2 class="page-title center">Add New Doctor</h2>
+        <p class="center form-subtitle">Register a new healthcare professional to the system.</p>
+        
+        <form @submit.prevent="addDoctor" class="edit-form">
+          <div class="form-group-vert">
+            <label class="bold-label">Username</label>
+            <div class="input-group">
+              <input type="text" placeholder="Enter username" v-model="form.username" class="form-input-transparent" required />
+            </div>
+          </div>
+
+          <div class="form-group-vert">
+            <label class="bold-label">Email Address</label>
+            <div class="input-group">
+              <input type="email" placeholder="Enter email" v-model="form.email" class="form-input-transparent" required />
+            </div>
+          </div>
+
+          <div class="form-group-vert">
+            <label class="bold-label">Password</label>
+            <div class="input-group">
+              <input type="password" placeholder="Create password" v-model="form.password" class="form-input-transparent" required />
+            </div>
+          </div>
+
+          <div class="form-group-vert">
+            <label class="bold-label">Specialization</label>
+            <div class="input-group">
+              <select v-model="form.specialization" class="premium-select select-transparent" required>
+                <option value="" disabled>Select Specialization</option>
+                <option v-for="s in specializations" :key="s" :value="s">{{ s }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group-vert last">
+            <label class="bold-label">Experience (Years)</label>
+            <div class="input-group">
+              <input type="number" placeholder="Years of experience" v-model="form.experience_years" class="form-input-transparent" required />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary btn-full mt-10">
+            Register Doctor
+          </button>
+          
+          <div class="center mt-15">
+            <router-link to="/admin/dashboard" class="back-link text-primary" style="font-weight: 600; text-decoration: none;">Back to Dashboard</router-link>
+          </div>
+        </form>
       </div>
-      <div class="input-group">
-        <input
-          type="email"
-          placeholder="Email"
-          v-model="form.email"
-          required/>
-        <span class="icon">📧</span>
-      </div>
-      <div class="input-group">
-        <input
-          type="password"
-          placeholder="Password"
-          v-model="form.password"
-          required/>
-        <span class="icon">🔒</span>
-      </div>
-      <div class="input-group">
-        <select
-          v-model="form.specialization"
-          class="specialization-select"
-          required>
-          <option value="" disabled>-- Select Specialization --</option>
-          <option v-for="s in specializations" :key="s" :value="s">{{ s }}</option>
-        </select>
-        <span class="icon">🩺</span>
-      </div>
-      <div class="input-group">
-        <input
-          type="number"
-          placeholder="Experience (Years)"
-          v-model="form.experience_years"/>
-        <span class="icon">📅</span>
-      </div>
-      <button class="login-btn" @click="addDoctor">
-        Add Doctor
-      </button>
-      <p class="register-text">
-        <router-link to="/admin/dashboard">← Back to Dashboard</router-link>
-      </p>
     </div>
   </div>
 </template>
@@ -69,13 +74,10 @@ export default {
       },
       specializations: [
         "Cardiologist",
-        "Dermatologist",
+        "Dentist",
         "General Physician",
         "Neurologist",
-        "Orthopedic Surgeon",
-        "Pediatrician",
-        "Psychiatrist",
-        "Surgeon"
+        "Orthopedic Surgeon"
       ]
     };
   },
@@ -93,3 +95,6 @@ export default {
   }
 };
 </script>
+
+
+

@@ -15,3 +15,4 @@ export default {
   name: "DoctorAvailability"
 };
 </script>
+

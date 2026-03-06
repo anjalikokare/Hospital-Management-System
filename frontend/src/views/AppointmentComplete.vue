@@ -1,34 +1,54 @@
 <template>
-  <div class="doctor-dashboard-wrapper">
+  <div class="doctor-dashboard-wrapper auth-bg">
     <AppNavbar role="doctor" />
-    <div class="complete-page">
-      <div class="login-card">
-        <h2>Complete Appointment</h2>
-        <div class="input-group">
-          <textarea
-            placeholder="Enter diagnosis"
-            v-model="diagnosis"
-            rows="3"
-          ></textarea>
-        </div>
-        <div class="input-group">
-          <textarea
-            placeholder="Enter prescription"
-            v-model="prescription"
-            rows="3"
-          ></textarea>
-        </div>
-        <div class="input-group">
-          <textarea
-            placeholder="Additional notes"
-            v-model="notes"
-            rows="3"
-          ></textarea>
-        </div>
-        <button class="login-btn" @click="submitTreatment">
-          Save & Complete
-        </button>
-        <p v-if="error" class="error-text">{{ error }}</p>
+    <div class="admin-page flex-center bg-light">
+      <div class="section-card narrow-card transition-fade">
+        <h2 class="page-title center">Treatment Details</h2>
+        <p class="center form-subtitle">Please enter the diagnosis and prescription for this session before marking it as completed.</p>
+        
+        <form @submit.prevent="submitTreatment" class="edit-form">
+          <div class="form-group-vert">
+            <label class="bold-label">Diagnosis</label>
+            <textarea
+              placeholder="e.g. Viral Fever, Common Cold..."
+              v-model="diagnosis"
+              rows="3"
+              class="form-input textarea-input"
+              required
+            ></textarea>
+          </div>
+          
+          <div class="form-group-vert">
+            <label class="bold-label">Prescription</label>
+            <textarea
+              placeholder="e.g. Paracetamol 500mg, Rest for 2 days..."
+              v-model="prescription"
+              rows="3"
+              class="form-input textarea-input"
+              required
+            ></textarea>
+          </div>
+          
+          <div class="form-group-vert last">
+            <label class="bold-label">Additional Notes (Optional)</label>
+            <textarea
+              placeholder="Any extra advice for the patient..."
+              v-model="notes"
+              rows="2"
+              class="form-input textarea-input"
+            ></textarea>
+          </div>
+          
+          <div class="actions-row">
+            <button type="submit" class="btn-primary flex-1">
+              Save & Mark Completed
+            </button>
+            <button type="button" class="btn-danger-outline" @click="$router.push('/doctor/dashboard')">
+              Cancel
+            </button>
+          </div>
+          <p v-if="error" class="error-text center mt-15">{{ error }}</p>
+        </form>
       </div>
     </div>
   </div>
@@ -80,14 +100,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.doctor-dashboard-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-.complete-page {
-  flex: 1;
-  min-height: auto !important;
-}
-</style>

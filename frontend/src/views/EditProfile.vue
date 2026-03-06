@@ -1,33 +1,68 @@
 <template>
-  <div class="page">
+  <div class="admin-dashboard-wrapper auth-bg edit-profile-page">
     <AppNavbar role="patient" />
-    <div class="section-card">
-      <h3>Edit Profile</h3>
-      <input
-        class="search"
-        placeholder="Contact Number"
-        v-model="patient.contact"/>
-      <input
-        class="search"
-        type="number"
-        placeholder="Age"
-        v-model="patient.age" />
-      <select class="search" v-model="patient.gender">
-        <option value="">Select Gender</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
-      <input
-        class="search"
-        placeholder="Address"
-        v-model="patient.address" />
-      <button class="btn-primary" @click="saveProfile">
-        Save Changes
-      </button>
-      <p v-if="message" class="success-text">
-        {{ message }}
-      </p>
+    <div class="admin-page flex-center bg-light">
+      <div class="section-card narrow-card transition-fade">
+        <h2 class="page-title center">Edit Profile</h2>
+        <p class="center form-subtitle">Keep your contact and personal information up to date.</p>
+        
+        <form @submit.prevent="saveProfile" class="edit-form">
+          <div class="form-group-vert">
+            <label class="bold-label">Contact Number</label>
+            <div class="input-group">
+              <input
+                class="form-input-transparent"
+                placeholder="e.g. +91 9876543210"
+                v-model="patient.contact"
+                required />
+            </div>
+          </div>
+          
+          <div class="form-group-vert">
+            <label class="bold-label">Age</label>
+            <div class="input-group">
+              <input
+                class="form-input-transparent"
+                type="number"
+                placeholder="Enter your age"
+                v-model="patient.age"
+                required />
+            </div>
+          </div>
+          
+          <div class="form-group-vert">
+            <label class="bold-label">Gender</label>
+            <div class="input-group">
+              <select class="form-input-transparent" v-model="patient.gender" required>
+                <option value="" disabled>Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group-vert last">
+            <label class="bold-label">Address</label>
+            <div class="input-group" style="align-items: flex-start; padding-top: 10px;">
+              <textarea
+                class="form-input-transparent"
+                placeholder="Enter your full address"
+                v-model="patient.address"
+                rows="2"
+                required></textarea>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn-primary btn-full">
+            Save Profile Changes
+          </button>
+          
+          <p v-if="message" class="success-text center mt-15">
+            {{ message }}
+          </p>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -76,3 +111,4 @@ export default {
   }
 };
 </script>
+
