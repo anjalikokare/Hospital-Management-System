@@ -4,17 +4,17 @@
     <div class="admin-page">
       <h2 class="page-title">Admin Command Center</h2>
       <div class="stats-row">
-        <div class="stat-card blue-card">
-          <p>Total Doctors</p>
-          <h2>{{ stats.total_doctors }}</h2>
+        <div class="stat-card" style="background: #e0f2fe; color: #0369a1; border: 2px solid #bae6fd; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #0284c7;">Total Doctors</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.total_doctors }}</h2>
         </div>
-        <div class="stat-card blue-card">
-          <p>Total Patients</p>
-          <h2>{{ stats.total_patients }}</h2>
+        <div class="stat-card" style="background: #dcfce7; color: #15803d; border: 2px solid #bbf7d0; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #16a34a;">Total Patients</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.total_patients }}</h2>
         </div>
-        <div class="stat-card blue-card" @click="currentTab = 'appointments'">
-          <p>Total Appointments</p>
-          <h2>{{ stats.total_appointments }}</h2>
+        <div class="stat-card" @click="currentTab = 'appointments'" style="background: #fdf2f8; color: #be185d; border: 2px solid #fbcfe8; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #db2777;">Total Appointments</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.total_appointments }}</h2>
         </div>
       </div>
       <div class="tab-bar">
@@ -48,7 +48,7 @@
         </button>
       </div>
       <div class="tab-content transition-fade">
-        <div v-if="currentTab === 'doctors'" class="section-card">
+        <div v-if="currentTab === 'doctors'" class="section-card" style="background: #eff6ff; border: 2px solid #bae6fd; border-radius: 20px;">
           <div class="section-header">
             <h4>Doctor Directory</h4>
           </div>
@@ -105,7 +105,7 @@
             </tbody>
           </table>
         </div>
-        <div v-if="currentTab === 'patients'" class="section-card">
+        <div v-if="currentTab === 'patients'" class="section-card" style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 20px;">
           <h4>Patient Registry</h4>
           <input
             class="premium-search"
@@ -156,7 +156,7 @@
             </tbody>
           </table>
         </div>
-        <div v-if="currentTab === 'appointments'" class="section-card">
+        <div v-if="currentTab === 'appointments'" class="section-card" style="background: #fdf2f8; border: 2px solid #fbcfe8; border-radius: 20px;">
           <h4>Master Appointment Schedule</h4>
           <table class="styled-table">
             <thead>
@@ -184,7 +184,7 @@
             </tbody>
           </table>
         </div>
-        <div v-if="currentTab === 'add-doctor'" class="section-card transition-fade">
+        <div v-if="currentTab === 'add-doctor'" class="section-card transition-fade center" style="background: #fffcf0; border: 3px solid #ffcc33; border-radius: 20px; max-width: 600px; margin: 0 auto; padding: 40px;">
           <h4>Register New Doctor</h4>
           <div class="input-groups add-doctor-form">
             <div class="input-group">

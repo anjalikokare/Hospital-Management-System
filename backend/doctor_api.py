@@ -142,7 +142,10 @@ def add_treatment(appointment_id):
     appointment.status = "Completed"
     db.session.add(treatment)
     db.session.commit()
-    send_treatment_email.delay(appointment.id)
+    try:
+        send_treatment_email.delay(appointment.id)
+    except Exception:
+        send_treatment_email(appointment.id)
     return {"message": "Appointment completed"}, 201
 
 
@@ -188,6 +191,8 @@ def update_availability():
     if not date_str:
         return {"message": "Date required"}, 400
     date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+    if date_obj < date.today():
+        return {"message": "Cannot set availability for past dates"}, 400
     availability = Availability.query.filter_by(
         doctor_id=doctor.id,
         date=date_obj
@@ -219,7 +224,10 @@ def generate_monthly_report():
     doctor = Doctor.query.filter_by(user_id=user_id).first()
     if not doctor:
         return {"message": "Doctor profile not found"}, 404
-    generate_monthly_reports.delay()
+    try:
+        generate_monthly_reports.delay(doctor.id)
+    except Exception:
+        generate_monthly_reports(doctor.id)
     return {"message": "Report sent to your email successfully"}, 200
 
 

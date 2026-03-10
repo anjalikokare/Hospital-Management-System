@@ -4,17 +4,17 @@
     <div class="doctor-page">
       <h2 class="page-title">Doctor Workspace</h2>
       <div class="stats-row">
-        <div class="stat-card blue-card">
-          <p>Today’s Appointments</p>
-          <h2>{{ stats.today }}</h2>
+        <div class="stat-card" style="background: #e0f2fe; color: #0369a1; border: 2px solid #bae6fd; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #0284c7;">Today’s Appointments</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.today }}</h2>
         </div>
-        <div class="stat-card blue-card" @click="currentTab = 'patients'">
-          <p>Assigned Patients</p>
-          <h2>{{ stats.patients }}</h2>
+        <div class="stat-card" @click="currentTab = 'patients'" style="background: #dcfce7; color: #15803d; border: 2px solid #bbf7d0; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #16a34a;">Assigned Patients</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.patients }}</h2>
         </div>
-        <div class="stat-card blue-card" @click="currentTab = 'appointments'">
-          <p>Upcoming (7 Days)</p>
-          <h2>{{ stats.upcoming }}</h2>
+        <div class="stat-card" @click="currentTab = 'appointments'" style="background: #fdf2f8; color: #be185d; border: 2px solid #fbcfe8; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #db2777;">Upcoming (7 Days)</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ stats.upcoming }}</h2>
         </div>
       </div>
       <div class="tab-bar">
@@ -48,7 +48,7 @@
         </button>
       </div>
       <div class="tab-content">
-        <div v-if="currentTab === 'appointments'" class="section-card transition-fade">
+        <div v-if="currentTab === 'appointments'" class="section-card transition-fade" style="background: #fdf2f8; border: 2px solid #fbcfe8; border-radius: 20px;">
           <h3>My Upcoming Appointments</h3>
           <table class="styled-table">
             <thead>
@@ -97,7 +97,7 @@
             </tbody>
           </table>
         </div>
-        <div v-if="currentTab === 'patients'" class="section-card transition-fade">
+        <div v-if="currentTab === 'patients'" class="section-card transition-fade" style="background: #eff6ff; border: 2px solid #bae6fd; border-radius: 20px;">
           <h3>My Patients</h3>
           <table class="styled-table">
             <thead>
@@ -123,13 +123,13 @@
             </tbody>
           </table>
         </div>
-        <div v-if="currentTab === 'availability'" class="section-card transition-fade center">
+        <div v-if="currentTab === 'availability'" class="section-card transition-fade center" style="max-width: 600px; min-height: 480px; margin: 0 auto; padding: 60px 40px; border: 4px solid #ffcc33; border-radius: 25px; background: linear-gradient(135deg, #fffcf0, #ffffff); display: flex; flex-direction: column; justify-content: center;">
           <h3 class="mb-10">Manage Availability</h3>
           <p class="muted mb-30">Select date and slots for next 7 days.</p>
           <div class="availability-form">
             <div class="form-group-flex-center mb-20" style="display: flex; justify-content: center; align-items: center; gap: 15px;">
               <label class="bold-label" style="white-space: nowrap;">Select Date:</label>
-              <input type="date" v-model="availabilityForm.date" class="form-input" style="max-width: 250px;" />
+              <input type="date" v-model="availabilityForm.date" :min="todayDate" class="form-input" style="max-width: 250px;" />
             </div>
             <div class="slot-options mt-20" style="text-align: left; display: inline-block;">
               <label class="d-block mb-10">
@@ -142,18 +142,18 @@
               </label>
             </div>
             <div class="mt-30">
-              <button class="btn-primary" style="width: 100%; max-width: 350px;" @click="updateAvailability">
+              <button class="btn-primary" @click="updateAvailability">
                 Save Availability
               </button>
             </div>
           </div>
         </div>
-        <div v-if="currentTab === 'reports'" class="section-card transition-fade center">
+        <div v-if="currentTab === 'reports'" class="section-card transition-fade center" style="max-width: 600px; min-height: 480px; margin: 0 auto; padding: 60px 40px; border: 4px solid #ffcc33; border-radius: 25px; background: linear-gradient(135deg, #fffcf0, #ffffff); display: flex; flex-direction: column; justify-content: center;">
           <h3 class="mb-10">Monthly Activity Report</h3>
           <p class="muted mb-30">Receive your appointment summary via email.</p>
           <div class="availability-form">
-            <p class="small-text mb-20">The report will be sent as a CSV attachment to your registered email address.</p>
-            <button class="btn-primary" style="width: 100%; max-width: 350px;" @click="generateReport" :disabled="loadingReport">
+
+            <button class="btn-primary" @click="generateReport" :disabled="loadingReport">
               {{ loadingReport ? 'Processing...' : 'Send Report to My Email' }}
             </button>
             <p v-if="reportMsg" class="success-text mt-15">{{ reportMsg }}</p>
@@ -187,6 +187,11 @@ export default {
       },
     };
   },
+  computed: {
+    todayDate() {
+      return new Date().toISOString().split("T")[0];
+    }
+  },
   mounted() {
     this.fetchData();
   },
@@ -203,7 +208,7 @@ export default {
     async generateReport() {
       try {
         this.loadingReport = true;
-        this.reportMsg = "Processing report...";
+        this.reportMsg = "";
         this.reportError = "";
         await api.post("/doctor/monthly-report/generate");
         this.reportMsg = "Activity report has been sent to your email!";

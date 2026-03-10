@@ -11,7 +11,7 @@
         </select>
       </div>
       <div class="input-group">
-        <input type="date" v-model="date" />
+        <input type="date" v-model="date" :min="todayDate" />
       </div>
       <div class="input-group">
         <input type="time" v-model="time" />
@@ -38,6 +38,11 @@ export default {
       msg: "",
       error: ""
     };
+  },
+  computed: {
+    todayDate() {
+      return new Date().toISOString().split("T")[0];
+    }
   },
 
   mounted() {

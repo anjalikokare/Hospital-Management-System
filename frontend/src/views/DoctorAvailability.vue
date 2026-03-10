@@ -3,7 +3,7 @@
     <h2>Update Availability</h2>
     <form class="form-card">
       <label>Date</label>
-      <input type="date" />
+      <input type="date" :min="todayDate" />
       <label>Time Slot</label>
       <input type="text" placeholder="10:00 - 12:00" />
       <button class="btn-primary">Save Availability</button>
@@ -12,7 +12,12 @@
 </template>
 <script>
 export default {
-  name: "DoctorAvailability"
+  name: "DoctorAvailability",
+  computed: {
+    todayDate() {
+      return new Date().toISOString().split("T")[0];
+    }
+  }
 };
 </script>
 

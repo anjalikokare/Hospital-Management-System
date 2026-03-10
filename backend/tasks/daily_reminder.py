@@ -15,13 +15,13 @@ def send_daily_reminders():
         smtp_server = "localhost"
         smtp_port = 1025
         sender_email = "anjalirkokare@gmail.com"
-        server = smtplib.SMTP(smtp_server, smtp_port)
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
         sent_count = 0
         for a in appts:
             patient_name = a.patient.user.username
             patient_email = a.patient.user.email
             doctor_name = a.doctor.user.username
-            target_email = sender_email 
+            target_email = patient_email
             body = f"Hi {patient_name}\n\nThis is a reminder for your appointment with Dr. {doctor_name} today at {a.time}.\n\nBest regards,\nHMS Team"
             msg = MIMEText(body)
             msg['Subject'] = f'Appointment Reminder - {patient_name}'
@@ -31,5 +31,6 @@ def send_daily_reminders():
             sent_count += 1
         server.quit()
         return sent_count
-    except Exception:
+    except Exception as e:
+        print(f"[REMINDER] Error: {e}")
         return 0

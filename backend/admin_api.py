@@ -218,13 +218,21 @@ def update_patient(patient_id):
 @admin_required
 def trigger_full_export():
     from tasks.export_csv import export_all_data
-    task = export_all_data.delay()
+    try:
+        task = export_all_data.delay()
+    except Exception:
+        export_all_data()
+        return {"message": "Full hospital data export completed synchronously"}, 200
     return {"message": "Full hospital data export started", "task_id": task.id}, 202
 @admin_bp.route('/generate-reports', methods=['POST'])
 @admin_required
 def trigger_monthly_reports():
     from tasks.monthly_report import generate_monthly_reports
-    task = generate_monthly_reports.delay()
+    try:
+        task = generate_monthly_reports.delay()
+    except Exception:
+        generate_monthly_reports()
+        return {"message": "Monthly activity reports generated synchronously"}, 200
     return {"message": "Monthly activity reports generation started (Emails sent directly)", "task_id": task.id}, 202
 
 

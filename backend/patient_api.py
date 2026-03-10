@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, Response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from datetime import datetime
+from datetime import datetime, date
 from models.models import Doctor, Patient, Appointment, Availability, Treatment, User, db
 from celery_config import celery
 from cache import cache
@@ -46,7 +46,10 @@ def get_doctor_availability(doctor_id):
     cached = cache.get(cache_key)
     if cached is not None:
         return cached, 200
-    availability = Availability.query.filter_by(doctor_id=doctor_id).all()
+    availability = Availability.query.filter(
+        Availability.doctor_id == doctor_id,
+        Availability.date >= date.today()
+    ).all()
     result = []
     for a in availability:
         result.append({
@@ -66,9 +69,9 @@ def create_appointment():
         return {"message": "Only patients can book appointments"}, 403
     data = request.get_json()
     doctor_id = data.get("doctor_id")
-    date = data.get("date")
+    date_str = data.get("date")
     time = data.get("time")
-    if not doctor_id or not date or not time:
+    if not doctor_id or not date_str or not time:
         return {"message": "Missing required fields"}, 400
     patient = Patient.query.filter_by(user_id=user_id).first()
     if not patient:
@@ -76,7 +79,9 @@ def create_appointment():
     doctor = Doctor.query.get(doctor_id)
     if not doctor:
         return {"message": "Doctor not found"}, 404
-    appointment_date = datetime.strptime(date, "%Y-%m-%d").date()
+    appointment_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    if appointment_date < date.today():
+        return {"message": "Cannot book appointment for past dates"}, 400
     availability = Availability.query.filter_by(
         doctor_id=doctor.id,
         date=appointment_date
@@ -138,9 +143,9 @@ def reschedule_appointment(appointment_id):
     if claims.get("role") != "patient":
         return {"message": "Only patients can reschedule"}, 403
     data = request.get_json()
-    new_date = data.get("date")
+    new_date_str = data.get("date")
     new_time = data.get("time")
-    if not new_date or not new_time:
+    if not new_date_str or not new_time:
         return {"message": "Date and time required"}, 400
     patient = Patient.query.filter_by(user_id=user_id).first()
     appointment = Appointment.query.get(appointment_id)
@@ -148,7 +153,9 @@ def reschedule_appointment(appointment_id):
         return {"message": "Appointment not found"}, 404
     if appointment.status != "Booked":
         return {"message": "Only booked appointments can be rescheduled"}, 400
-    appointment_date = datetime.strptime(new_date, "%Y-%m-%d").date()
+    appointment_date = datetime.strptime(new_date_str, "%Y-%m-%d").date()
+    if appointment_date < date.today():
+        return {"message": "Cannot reschedule appointment to a past date"}, 400
     availability = Availability.query.filter_by(
         doctor_id=appointment.doctor_id,
         date=appointment_date
@@ -260,8 +267,9 @@ def get_reschedule_availability(appointment_id):
     appointment = Appointment.query.get(appointment_id)
     if not appointment:
         return {"message": "Appointment not found"}, 404
-    availability = Availability.query.filter_by(
-        doctor_id=appointment.doctor_id
+    availability = Availability.query.filter(
+        Availability.doctor_id == appointment.doctor_id,
+        Availability.date >= date.today()
     ).all()
     result = []
     for a in availability:

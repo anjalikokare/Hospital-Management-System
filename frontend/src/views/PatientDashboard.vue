@@ -4,17 +4,17 @@
     <div class="patient-page">
       <h2 class="page-title">My Health Portal</h2>
       <div class="stats-row">
-        <div class="stat-card blue-card" @click="currentTab = 'appointments'">
-          <p>My Appointments</p>
-          <h2>{{ appointments.length }}</h2>
+        <div class="stat-card" @click="currentTab = 'appointments'" style="background: #fdf2f8; color: #be185d; border: 2px solid #fbcfe8; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #db2777;">My Appointments</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ appointments.length }}</h2>
         </div>
-        <div class="stat-card blue-card" @click="currentTab = 'book'">
-          <p>Available Doctors</p>
-          <h2>{{ doctors.length }}</h2>
+        <div class="stat-card" @click="currentTab = 'book'" style="background: #e0f2fe; color: #0369a1; border: 2px solid #bae6fd; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #0284c7;">Available Doctors</p>
+          <h2 style="font-size: 42px; margin: 0;">{{ doctors.length }}</h2>
         </div>
-        <div class="stat-card blue-card">
-          <p>Account Status</p>
-          <b>Active</b>
+        <div class="stat-card" style="background: #dcfce7; color: #15803d; border: 2px solid #bbf7d0; border-radius: 20px; height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <p style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #16a34a;">Account Status</p>
+          <b style="font-size: 24px;">Active</b>
         </div>
       </div>
       <div class="tab-bar">
@@ -41,10 +41,10 @@
         </button>
       </div>
       <div class="tab-content transition-fade">
-        <div v-if="currentTab === 'book'" class="section-card">
+        <div v-if="currentTab === 'book'" class="section-card transition-fade center" style="background: #fffcf0; border: 3px solid #ffcc33; border-radius: 20px; max-width: 600px; margin: 0 auto; padding: 40px;">
           <h3>Schedule a Consultation</h3>
           <p class="muted">Select your preferred doctor and time slot.</p>
-          <div class="booking-container">
+          <div class="booking-container" style="margin: 0 auto;">
             <select v-model="form.doctor_id" class="premium-search">
               <option value="">Choose Doctor</option>
               <option v-for="d in doctors" :key="d.doctor_id" :value="d.doctor_id">
@@ -65,7 +65,7 @@
             <p v-if="error" class="error-text">{{ error }}</p>
           </div>
         </div>
-        <div v-if="currentTab === 'appointments'" class="section-card">
+        <div v-if="currentTab === 'appointments'" class="section-card" style="background: #fdf2f8; border: 2px solid #fbcfe8; border-radius: 20px;">
           <h3>My Upcoming Appointments</h3>
           <table class="styled-table">
             <thead>
@@ -103,7 +103,7 @@
           </table>
         </div>
         <div v-if="currentTab === 'history'">
-          <div class="section-card transition-fade">
+          <div class="section-card transition-fade" style="background: #eff6ff; border: 2px solid #bae6fd; border-radius: 20px;">
             <h3>My Medical Records</h3>
             <table class="styled-table">
               <thead>
@@ -129,7 +129,7 @@
               </tbody>
             </table>
           </div>
-          <div class="section-card transition-fade">
+          <div class="section-card transition-fade" style="background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 20px;">
             <h3>Export Health Data</h3>
             <p class="muted mb-10">Export your complete treatment history as a CSV file directly to your email.</p>
             <div class="mt-10">

@@ -43,18 +43,26 @@ Summary:
         encoders.encode_base64(part)
         part.add_header("Content-Disposition", f"attachment; filename=report_{month_tag.replace(' ', '_')}.csv")
         msg.attach(part)
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
         server.send_message(msg)
         server.quit()
-    except Exception:
-        pass
+        print(f"[REPORT] Email sent to {doctor_email}")
+    except Exception as e:
+        print(f"[REPORT] Email failed for {doctor_email}: {e}")
 @celery.task(name="tasks.monthly_report.generate_monthly_reports")
-def generate_monthly_reports():
+def generate_monthly_reports(doctor_id=None):
     today = date.today()
     start = today.replace(day=1)
-    end = today + timedelta(days=1)
+    # End = first day of next month
+    if today.month == 12:
+        end = today.replace(year=today.year + 1, month=1, day=1)
+    else:
+        end = today.replace(month=today.month + 1, day=1)
     month_tag = start.strftime("%B %Y")
-    doctors = Doctor.query.all()
+    if doctor_id:
+        doctors = Doctor.query.filter_by(id=doctor_id).all()
+    else:
+        doctors = Doctor.query.all()
     for d in doctors:
         appts = (Appointment.query
                 .filter(Appointment.doctor_id == d.id, Appointment.date >= start, Appointment.date < end)
@@ -90,9 +98,11 @@ HMS Team
         msg['Subject'] = f'Medical Report - Visit on {date_str}'
         msg['From'] = SENDER_EMAIL
         msg['To'] = patient_email
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
         server.send_message(msg)
         server.quit()
+        print(f"[TREATMENT] Email sent to {patient_email}")
         return "Sent"
-    except Exception:
+    except Exception as e:
+        print(f"[TREATMENT] Email failed: {e}")
         return "Failed"
